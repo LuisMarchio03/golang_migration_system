@@ -154,7 +154,7 @@ func RunMigrations(db *sql.DB) error {
 	return nil
 }
 
-// TODO: No momento essa func é apenas para testar a aplicação
+// TODO: No momento essa func é apenas para testar a aplicação!
 func main() {
 	cfg := Cfg{
 		User:   "meu_app_user",
