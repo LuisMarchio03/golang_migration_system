@@ -7,12 +7,15 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const migrationsDir = "./migrations"
 
 // Configuração do banco de dados
-type CfgMySql struct {
+type Cfg struct {
 	User   string
 	Passwd string
 	Net    string
@@ -26,22 +29,44 @@ type Schema struct {
 	Fields    map[string]string // Mapa de nome de campo para tipo de dados
 }
 
-func ConfigDB(dbDriver string, cfg interface{}) error {
-	if dbDriver == "MySql" {
-		DbMysql(cfg)
+// ConfigDB configura o banco de dados com base no driver especificado e nas configurações fornecidas.
+// Ele recebe o nome do driver do banco de dados e as configurações do banco de dados como parâmetros.
+// Se o driver for "MySql", chama a função DbMysql para configurar o banco de dados MySQL.
+// Retorna um possível erro, se houver.
+func ConfigDB(dbDriver string, cfg Cfg) (*sql.DB, error) {
+	var db *sql.DB
+	var err error
+
+	switch dbDriver {
+	case "MySql":
+		db, err = DbMysql(cfg)
+	// Adicione mais cases aqui para outros drivers de banco de dados
+	default:
+		return nil, fmt.Errorf("Driver de banco de dados não suportado: %s", dbDriver)
 	}
 
-	return nil
+	return db, err
 }
 
-func DbMysql(cfg CfgMySql) {
-	dsn := fmt.Sprintf("%s:%s@%s(%s)/%s", cfg.User, cfg.Passwd, cfg.Net, cfg.Addr, cfg.DBName)
-	db, err := sql.Open("mysql", dsn)
+// DbMysql estabelece uma conexão com um banco de dados MySQL utilizando as configurações fornecidas.
+// Recebe um struct Cfg contendo os detalhes de configuração do banco de dados, como usuário, senha, endereço e nome do banco de dados.
+// Retorna um ponteiro para sql.DB, que representa a conexão com o banco de dados, e um possível erro, se houver.
+func DbMysql(cfg Cfg) (*sql.DB, error) {
+	cfgMysql := mysql.Config{
+		User:   cfg.User,
+		Passwd: cfg.Passwd,
+		Net:    cfg.Net,
+		Addr:   cfg.Addr,
+		DBName: cfg.DBName,
+	}
+
+	db, err := sql.Open("mysql", cfgMysql.FormatDSN())
 	if err != nil {
 		fmt.Println("Erro ao conectar ao banco de dados:", err)
-		return
+		return nil, err
 	}
-	defer db.Close()
+
+	return db, nil
 }
 
 // GenerateMigration cria uma nova migração com base nas estruturas de dados fornecidas.
@@ -64,8 +89,19 @@ func GenerateMigration(schemas ...Schema) (string, error) {
 	migrationContent := ""
 	for _, schema := range schemas {
 		migrationContent += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (\n", schema.TableName)
-		for fieldName, fieldType := range schema.Fields {
-			migrationContent += fmt.Sprintf("    %s %s,\n", fieldName, fieldType)
+		fields := schema.Fields
+		numFields := len(fields)
+		i := 0
+		for fieldName, fieldType := range fields {
+			// Adiciona o campo com o tipo correspondente
+			migrationContent += fmt.Sprintf("    %s %s", fieldName, fieldType)
+			// Se não for o último campo, adiciona vírgula
+			// Poís a vírgula no ultimo campo, ocasiona um  erro de sintaxe no SQL
+			if i < numFields-1 {
+				migrationContent += ","
+			}
+			migrationContent += "\n"
+			i++
 		}
 		migrationContent += ");\n\n"
 	}
@@ -118,7 +154,22 @@ func RunMigrations(db *sql.DB) error {
 	return nil
 }
 
+// TODO: No momento essa func é apenas para testar a aplicação
 func main() {
+	cfg := Cfg{
+		User:   "meu_app_user",
+		Passwd: "meu_app_password",
+		Net:    "tcp",
+		Addr:   "localhost:3306",
+		DBName: "meu_app_db",
+	}
+
+	// Declarar db
+	db, err := ConfigDB("MySql", cfg)
+	if err != nil {
+		fmt.Println("Erro ao conectar com o db:", err)
+		return
+	}
 
 	// Gerar e executar migrações
 	userSchema := Schema{
