@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    age INT
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    price DECIMAL(10,2)
+);
+
