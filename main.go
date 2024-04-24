@@ -155,47 +155,47 @@ func RunMigrations(db *sql.DB) error {
 }
 
 // TODO: No momento essa func é apenas para testar a aplicação!
-func main() {
-	cfg := Cfg{
-		User:   "meu_app_user",
-		Passwd: "meu_app_password",
-		Net:    "tcp",
-		Addr:   "localhost:3306",
-		DBName: "meu_app_db",
-	}
+// func main() {
+// 	cfg := Cfg{
+// 		User:   "meu_app_user",
+// 		Passwd: "meu_app_password",
+// 		Net:    "tcp",
+// 		Addr:   "localhost:3306",
+// 		DBName: "meu_app_db",
+// 	}
 
-	// Declarar db
-	db, err := ConfigDB("MySql", cfg)
-	if err != nil {
-		fmt.Println("Erro ao conectar com o db:", err)
-		return
-	}
+// 	// Declarar db
+// 	db, err := ConfigDB("MySql", cfg)
+// 	if err != nil {
+// 		fmt.Println("Erro ao conectar com o db:", err)
+// 		return
+// 	}
 
-	// Gerar e executar migrações
-	userSchema := Schema{
-		TableName: "users",
-		Fields: map[string]string{
-			"id":       "INT AUTO_INCREMENT PRIMARY KEY",
-			"username": "VARCHAR(50)",
-			"email":    "VARCHAR(100)",
-		},
-	}
+// 	// Gerar e executar migrações
+// 	userSchema := Schema{
+// 		TableName: "users",
+// 		Fields: map[string]string{
+// 			"id":       "INT AUTO_INCREMENT PRIMARY KEY",
+// 			"username": "VARCHAR(50)",
+// 			"email":    "VARCHAR(100)",
+// 		},
+// 	}
 
-	// 4. Chamada da função para gerar a migração
-	migrationFile, err := GenerateMigration(userSchema)
-	if err != nil {
-		fmt.Println("Erro ao gerar migração:", err)
-		return
-	}
+// 	// 4. Chamada da função para gerar a migração
+// 	migrationFile, err := GenerateMigration(userSchema)
+// 	if err != nil {
+// 		fmt.Println("Erro ao gerar migração:", err)
+// 		return
+// 	}
 
-	fmt.Println("Migração gerada com sucesso:", migrationFile)
+// 	fmt.Println("Migração gerada com sucesso:", migrationFile)
 
-	// 5. Executar migrações
-	err = RunMigrations(db)
-	if err != nil {
-		fmt.Println("Erro ao executar migrações:", err)
-		return
-	}
+// 	// 5. Executar migrações
+// 	err = RunMigrations(db)
+// 	if err != nil {
+// 		fmt.Println("Erro ao executar migrações:", err)
+// 		return
+// 	}
 
-	fmt.Println("Todas as migrações foram executadas com sucesso.")
-}
+// 	fmt.Println("Todas as migrações foram executadas com sucesso.")
+// }
