@@ -1,4 +1,4 @@
-module golang_migration_system
+module github.com/LuisMarchio03/golang_migration_system
 
 go 1.22.2
 

@@ -154,6 +154,10 @@ func RunMigrations(db *sql.DB) error {
 	return nil
 }
 
+func main() {
+	fmt.Println("Banco de dados configurado com sucesso!")
+}
+
 // TODO: No momento essa func é apenas para testar a aplicação!
 // func main() {
 // 	cfg := Cfg{
