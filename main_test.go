@@ -1,11 +1,12 @@
 package main_test
 
 import (
-	main "golang_migration_system"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	main "github.com/LuisMarchio03/golang_migration_system"
 )
 
 func TestConfigDB_MySQL(t *testing.T) {
