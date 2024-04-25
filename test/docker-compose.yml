@@ -1,50 +1,61 @@
 version: '3.8'
 
 services:
+  firebird:
+    image: jacobalberty/firebird
+    ports:
+      - "3050:3050"  # Porta padrão do Firebird
+    environment:
+      ISC_PASSWORD: masterkey  # Senha do banco de dados (altere conforme necessário)
+    volumes:
+      - ./data:/firebird/data  # Volume para persistir os dados do Firebird
+
   mysql:
     image: mysql:latest
     ports:
-      - "3306:3306"
+      - "3308:3306"  # Porta padrão do MySQL
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: meu_app_db
-      MYSQL_USER: meu_app_user
-      MYSQL_PASSWORD: meu_app_password
+      MYSQL_ROOT_PASSWORD: root  # Senha do usuário root (altere conforme necessário)
+      MYSQL_DATABASE: meu_app_db  # Nome do banco de dados
+      MYSQL_USER: meu_app_user  # Nome do usuário do banco de dados (altere conforme necessário)
+      MYSQL_PASSWORD: meu_app_password  # Senha do usuário do banco de dados (altere conforme necessário)
+    volumes:
+      - ./mysql_data:/var/lib/mysql  # Volume para persistir os dados do MySQL
 
   postgresql:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "5438:5432"
     environment:
       POSTGRES_DB: meu_app_db
       POSTGRES_USER: meu_app_user
       POSTGRES_PASSWORD: meu_app_password
 
-  mongodb:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: meu_app_db
-      MONGO_INITDB_ROOT_USERNAME: meu_app_user
-      MONGO_INITDB_ROOT_PASSWORD: meu_app_password
+  # mongodb:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     MONGO_INITDB_DATABASE: meu_app_db
+  #     MONGO_INITDB_ROOT_USERNAME: meu_app_user
+  #     MONGO_INITDB_ROOT_PASSWORD: meu_app_password
 
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    ports:
-      - "1433:1433"
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: example
-      MSSQL_PID: Express
-      MSSQL_DBNAME: meu_app_db
+  # mssql:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   ports:
+  #     - "1433:1433"
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     SA_PASSWORD: example
+  #     MSSQL_PID: Express
+  #     MSSQL_DBNAME: meu_app_db
 
-  cassandra:
-    image: cassandra:latest
-    ports:
-      - "9042:9042"
+  # cassandra:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9042:9042"
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
+  # redis:
+  #   image: redis:latest
+  #   ports:
+  #     - "6379:6379"

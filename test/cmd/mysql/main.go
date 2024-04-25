@@ -13,7 +13,7 @@ func main() {
 		User:   "meu_app_user",
 		Passwd: "meu_app_password",
 		Net:    "tcp",
-		Addr:   "localhost:3306",
+		Addr:   "localhost:3308",
 		DBName: "meu_app_db",
 	}
 
