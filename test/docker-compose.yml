@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: meu_app_db
+      MYSQL_USER: meu_app_user
+      MYSQL_PASSWORD: meu_app_password
+
+  postgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: meu_app_db
+      POSTGRES_USER: meu_app_user
+      POSTGRES_PASSWORD: meu_app_password
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: meu_app_db
+      MONGO_INITDB_ROOT_USERNAME: meu_app_user
+      MONGO_INITDB_ROOT_PASSWORD: meu_app_password
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: example
+      MSSQL_PID: Express
+      MSSQL_DBNAME: meu_app_db
+
+  cassandra:
+    image: cassandra:latest
+    ports:
+      - "9042:9042"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
