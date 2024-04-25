@@ -29,6 +29,9 @@ func GenerateMigration(schemas ...config.Schema) (string, error) {
 	migrationContent := ""
 	for _, schema := range schemas {
 		migrationContent += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (\n", schema.TableName)
+		if schema.DbType == "FirebirdSql" {
+			migrationContent = fmt.Sprintf("CREATE TABLE %s (\n", schema.TableName)
+		}
 		fields := schema.Fields
 		numFields := len(fields)
 		i := 0

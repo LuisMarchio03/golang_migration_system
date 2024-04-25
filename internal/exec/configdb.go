@@ -21,6 +21,8 @@ func ConfigDB(dbDriver string, cfg config.Cfg) (*sql.DB, error) {
 		db, err = drivers.DbMysql(cfg)
 	case "FirebirdSql":
 		db, err = drivers.DbFirebird(cfg)
+	case "PostgreSQL":
+		db, err = drivers.DbPostgreSQL(cfg)
 	// Adicione mais cases aqui para outros drivers de banco de dados
 	default:
 		return nil, fmt.Errorf("Driver de banco de dados não suportado: %s", dbDriver)

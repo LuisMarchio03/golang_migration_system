@@ -34,8 +34,7 @@ import (
 //   - Certifique-se de que o banco de dados Firebird esteja em execução e acessível no endereço especificado.
 //   - O usuário e a senha devem ser fornecidos de acordo com as configurações de segurança do seu banco de dados.
 func DbFirebird(cfg config.Cfg) (*sql.DB, error) {
-	connString := fmt.Sprintf("user=%s password=%s database=%s host=%s",
-		cfg.User, cfg.Passwd, cfg.DBName, cfg.Addr)
+	connString := fmt.Sprintf("%s:%s@%s/%s", cfg.User, cfg.Passwd, cfg.Addr, cfg.DBName)
 
 	db, err := sql.Open("firebirdsql", connString)
 	if err != nil {

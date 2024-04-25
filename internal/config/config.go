@@ -14,6 +14,7 @@ type Cfg struct {
 
 // Schema representa um esquema de tabela
 type Schema struct {
+	DbType    string
 	TableName string
 	Fields    map[string]string // Mapa de nome de campo para tipo de dados
 }
