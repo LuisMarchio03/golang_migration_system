@@ -2,6 +2,7 @@ package golang_migration_system
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/LuisMarchio03/golang_migration_system/internal/config"
 	"github.com/LuisMarchio03/golang_migration_system/internal/exec"
@@ -41,6 +42,7 @@ func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.D
 
 // GenerateMigration gera um arquivo de migração com as schemas fornecidas
 func ExecGenerateMigration(schemas ...config.Schema) (string, error) {
+	fmt.Println(migrationsDir)
 	migrationFileName, err := exec.GenerateMigration(migrationsDir, schemas...)
 	if err != nil {
 		return "", err
