@@ -12,14 +12,14 @@ import (
 // GenerateMigration cria uma nova migração com base nas estruturas de dados fornecidas.
 // Ele cria um arquivo .sql com um nome que inclui um timestamp para garantir unicidade.
 // Retorna o nome do arquivo de migração criado e um possível erro, se houver.
-func GenerateMigration(schemas ...config.Schema) (string, error) {
+func GenerateMigration(migrationsDir string, schemas ...config.Schema) (string, error) {
 	// 1. Criar o arquivo .sql da migration
 	// - Gera um timestamp do momento atual.
 	// - Cria um nome para a migração usando o timestamp.
 	// - Cria um arquivo com o nome da migração no diretório de migrações.
 	timestamp := time.Now().Format("20060102150405")
 	migrationFileName := fmt.Sprintf("migration_%s.sql", timestamp)
-	file, err := os.Create(filepath.Join(MigrationsDir, migrationFileName))
+	file, err := os.Create(filepath.Join(migrationsDir, migrationFileName))
 	if err != nil {
 		return "", err
 	}

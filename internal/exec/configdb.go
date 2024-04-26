@@ -3,6 +3,7 @@ package exec
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/LuisMarchio03/golang_migration_system/internal/config"
 	"github.com/LuisMarchio03/golang_migration_system/internal/drivers"
@@ -16,14 +17,15 @@ func ConfigDB(dbDriver string, cfg config.Cfg) (*sql.DB, error) {
 	var db *sql.DB
 	var err error
 
+	dbDriver = strings.ToLower(dbDriver)
+
 	switch dbDriver {
-	case "MySql":
+	case "mysql":
 		db, err = drivers.DbMysql(cfg)
-	case "FirebirdSql":
+	case "firebirdsql":
 		db, err = drivers.DbFirebird(cfg)
-	case "PostgreSQL":
+	case "postgresql":
 		db, err = drivers.DbPostgreSQL(cfg)
-	// Adicione mais cases aqui para outros drivers de banco de dados
 	default:
 		return nil, fmt.Errorf("Driver de banco de dados não suportado: %s", dbDriver)
 	}

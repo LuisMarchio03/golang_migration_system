@@ -8,16 +8,16 @@ import (
 	"path/filepath"
 )
 
-// RunMigrations executa todas as migrações encontradas no diretório MigrationsDir no banco de dados especificado.
+// RunMigrations executa todas as migrações encontradas no diretório migrationsDir no banco de dados especificado.
 // Retorna um possível erro, se houver.
-func RunMigrations(db *sql.DB) error {
+func RunMigrations(db *sql.DB, migrationsDir string) error {
 	// 1. Verificar se o diretório de migrações existe
-	if _, err := os.Stat(MigrationsDir); os.IsNotExist(err) {
+	if _, err := os.Stat(migrationsDir); os.IsNotExist(err) {
 		return fmt.Errorf("O diretório de migrações não existe")
 	}
 
 	// 2. Listar arquivos de migração
-	files, err := ioutil.ReadDir(MigrationsDir)
+	files, err := ioutil.ReadDir(migrationsDir)
 	if err != nil {
 		return fmt.Errorf("Erro ao listar arquivos de migração: %v", err)
 	}
@@ -25,7 +25,7 @@ func RunMigrations(db *sql.DB) error {
 	// 3. Executar migrações
 	for _, f := range files {
 		if !f.IsDir() && filepath.Ext(f.Name()) == ".sql" {
-			migrationPath := filepath.Join(MigrationsDir, f.Name())
+			migrationPath := filepath.Join(migrationsDir, f.Name())
 			fmt.Println("Executando migração:", migrationPath)
 
 			// Lê o conteúdo do arquivo de migração
