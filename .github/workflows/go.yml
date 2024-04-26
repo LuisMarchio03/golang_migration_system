@@ -41,10 +41,8 @@ jobs:
     - name: Stop MySQL Docker container
       run: docker stop mysql
       
-  release:
+  release-on-push:
     runs-on: ubuntu-latest
-    needs: build
-    
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
