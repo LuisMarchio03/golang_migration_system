@@ -41,24 +41,13 @@ jobs:
     - name: Stop MySQL Docker container
       run: docker stop mysql
       
-  create_release:
+  release:
     runs-on: ubuntu-latest
+    needs: build
+    
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Configurar Go
-        uses: actions/setup-go@v2
+      - uses: rymndhng/release-on-push-action@master
         with:
-          go-version: '1.22.2'
-
-      - name: Criar Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
-          body: |
-            ## Notas de Release
-            - Adicione notas de release aqui
-            - Você pode incluir informações sobre as alterações, correções ou melhorias
+          bump_version_scheme: minor
