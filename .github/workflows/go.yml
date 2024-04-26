@@ -20,7 +20,12 @@ jobs:
 
     - name: Start MySQL Docker container
       run: |
-        docker run -d --name mysql-db -p 3308:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw mysql:latest
+        docker run -d --name meu_app_db \
+          -p 3308:3306 \
+          -e MYSQL_ROOT_PASSWORD=meu_app_password \
+          -e MYSQL_USER=meu_app_user \
+          -e MYSQL_PASSWORD=meu_app_password \
+          mysql:latest
 
     - name: Build
       run: go build -v ./...
@@ -33,4 +38,4 @@ jobs:
         go test -v ./...
     
     - name: Stop MySQL Docker container
-      run: docker stop mysql-db
+      run: docker stop meu_app_db
