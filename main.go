@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/LuisMarchio03/golang_migration_system/internal/config"
 	"github.com/LuisMarchio03/golang_migration_system/internal/exec"
@@ -55,4 +56,39 @@ func ExecRunMigrations(db *sql.DB, migrationsDir string) error {
 		return err
 	}
 	return nil
+}
+
+func main() {
+	// Aqui você pode chamar suas funções conforme necessário
+	db, err := ExecConfigDB("mysql", config.Cfg{}, "migrationsDir")
+	if err != nil {
+		fmt.Println("Error configuring database:", err)
+		return
+	}
+
+	// Exemplo: gerar migrações
+	schema := config.Schema{
+		TableName: "users",
+		Fields: map[string]string{
+			"id":         "INT NOT NULL AUTO_INCREMENT PRIMARY KEY",
+			"username":   "VARCHAR(50) NOT NULL",
+			"email":      "VARCHAR(100) NOT NULL",
+			"created_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+			"updated_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+		},
+	}
+	migrationFileName, err := ExecGenerateMigration(schema)
+	if err != nil {
+		fmt.Println("Error generating migration:", err)
+		return
+	}
+	fmt.Println("Migration generated successfully:", migrationFileName)
+
+	// Exemplo: executar migrações
+	err = ExecRunMigrations(db, "migrationsDir")
+	if err != nil {
+		fmt.Println("Error executing migrations:", err)
+		return
+	}
+	fmt.Println("Migrations completed successfully.")
 }
