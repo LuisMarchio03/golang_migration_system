@@ -22,7 +22,7 @@ jobs:
       run: |
         docker run -d --name meu_app_db \
           -p 3308:3306 \
-          -e MYSQL_ROOT_PASSWORD=meu_app_password \
+          -e MYSQL_ROOT_PASSWORD=meu_app_password_root \
           -e MYSQL_USER=meu_app_user \
           -e MYSQL_PASSWORD=meu_app_password \
           mysql:latest
