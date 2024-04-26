@@ -1,4 +1,4 @@
-package golang_migration_system
+package main
 
 import (
 	"database/sql"
