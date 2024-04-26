@@ -2,7 +2,7 @@
 
 ## Description
 
-The Golang Migration System is a Go library that facilitates the management of MySQL database migrations.
+A database migration system in Go (Golang) that centralizes functions for managing database migrations across different database types, including MySQL, PostgreSQL, and FirebirdSQL. The project includes automated testing and Docker integration to facilitate migration management and execution in development and production environments.
 
 ## Installation
 
