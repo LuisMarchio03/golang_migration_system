@@ -41,11 +41,28 @@ jobs:
     - name: Stop MySQL Docker container
       run: docker stop mysql
       
-  release-on-push:
+  release:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    needs: build
+
     steps:
-      - uses: rymndhng/release-on-push-action@master
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          bump_version_scheme: minor
+          tag_name: v1.0.0  # Define a tag para o release
+          release_name: Release v1.0.0  # Nome do release
+          draft: false
+          prerelease: false
+          body: |
+            ## Release Notes
+            - Adicione notas de release aqui
+            - Você pode incluir informações sobre as alterações, correções ou melhorias
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: golang_migration_system
+          path: ./golang_migration_system
