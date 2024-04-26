@@ -2,6 +2,7 @@ package golang_migration_system_test
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
 
 	"github.com/LuisMarchio03/golang_migration_system/internal/config"
@@ -19,7 +20,7 @@ func TestExecConfigDB(t *testing.T) {
 		Addr:   "localhost:3308",
 		DBName: "meu_app_db",
 	}
-	migrationsDir := "../cmd/test_migrations"
+	migrationsDir := "."
 
 	// Executa a função a ser testada
 	db, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
@@ -38,11 +39,11 @@ func TestExecGenerateMigration(t *testing.T) {
 	// Cria um exemplo de schema para teste
 	schema := config.Schema{
 		DbType:    "mysql",
-		TableName: "test_table",
+		TableName: "test",
 		Fields: map[string]string{
-			"id":    "INT NOT NULL AUTO_INCREMENT",
-			"name":  "VARCHAR(255)",
-			"email": "VARCHAR(255)",
+			"id":       "INT AUTO_INCREMENT PRIMARY KEY",
+			"username": "VARCHAR(50)",
+			"email":    "VARCHAR(100)",
 		},
 	}
 
@@ -57,12 +58,27 @@ func TestExecGenerateMigration(t *testing.T) {
 }
 
 func TestExecRunMigrations(t *testing.T) {
+	cfg := config.Cfg{
+		User:   "meu_app_user",
+		Passwd: "meu_app_password",
+		Net:    "tcp",
+		Addr:   "localhost:3308",
+		DBName: "meu_app_db",
+	}
+	connString := fmt.Sprintf("%s:%s@%s(%s)/%s",
+		cfg.User,
+		cfg.Passwd,
+		cfg.Net,
+		cfg.Addr,
+		cfg.DBName,
+	)
+
 	// Simula a conexão com o banco de dados (pode ser feita com um banco de dados de teste)
-	db, _ := sql.Open("mysql", "testuser:testpassword@tcp(localhost:3306)/testdb")
+	db, _ := sql.Open("mysql", connString)
 	defer db.Close()
 
 	// Define o diretório de migrações para teste
-	migrationsDir := "../cmd/test_migrations"
+	migrationsDir := "."
 
 	// Executa a função a ser testada
 	err := golang_migration_system.ExecRunMigrations(db, migrationsDir)
