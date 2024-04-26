@@ -39,4 +39,4 @@ jobs:
         go test -v ./...
     
     - name: Stop MySQL Docker container
-      run: docker stop meu_app_db
+      run: docker stop mysql
