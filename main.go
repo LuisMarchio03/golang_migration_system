@@ -28,16 +28,16 @@ type Cfg = config.Cfg
 type Schema = config.Schema
 
 // ConfigDB configura e retorna uma conexão com o banco de dados
-func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, *mongo.Database, error) {
-	db, dbNoSql, err := exec.ConfigDB(dbDriver, cfg)
+func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, *mongo.Database, *mongo.Client, error) {
+	db, dbNoSql, client, err := exec.ConfigDB(dbDriver, cfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// Define o diretório de migrações
 	SetMigrationsDir(migrationsDir)
 
-	return db, dbNoSql, nil
+	return db, dbNoSql, client, nil
 }
 
 // GenerateMigration gera um arquivo de migração com as schemas fornecidas
@@ -93,7 +93,7 @@ func ExecRunMigrationsMongoDB(db *mongo.Database, migrationsDir string) error {
 
 func main() {
 	// Configuração do banco de dados MySQL
-	db, _, err := ExecConfigDB("mysql", config.Cfg{}, "migrationsDir")
+	db, _, _, err := ExecConfigDB("mysql", config.Cfg{}, ".")
 	if err != nil {
 		fmt.Println("Error configuring MySQL database:", err)
 		return
@@ -126,7 +126,8 @@ func main() {
 	fmt.Println("MySQL migrations completed successfully.")
 
 	// Configuração do banco de dados MongoDB
-	_, dbNoSQL, err := ExecConfigDB("mongodb", config.Cfg{}, "migrationsDir")
+	_, _, client, err := ExecConfigDB("mongodb", config.Cfg{}, "migrationsDir")
+	_ = client
 	if err != nil {
 		fmt.Println("Error configuring MongoDB:", err)
 		return
@@ -148,7 +149,7 @@ func main() {
 	fmt.Println("MongoDB migration generated successfully:", mongoMigrationFileName)
 
 	// Exemplo: executar migrações para MongoDB
-	err = ExecRunMigrationsMongoDB(dbNoSQL, "migrationsDir")
+	err = ExecRunMigrationsMongoDB(client.Database("users"), "migrationsDir")
 	if err != nil {
 		fmt.Println("Error executing MongoDB migrations:", err)
 		return

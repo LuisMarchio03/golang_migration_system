@@ -24,24 +24,24 @@ import (
 //	}
 //
 //	- Agora você pode usar 'db' para realizar operações no banco de dados MongoDB.
-func DbMongoDB(cfg config.Cfg) (*mongo.Database, error) {
+func DbMongoDB(cfg config.Cfg) (*mongo.Database, *mongo.Client, error) {
 	// Configura as opções para a conexão com o banco de dados MongoDB
 	clientOptions := options.Client().ApplyURI("mongodb://" + cfg.Addr)
 
 	// Cria um novo cliente MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Verifica se a conexão com o cliente MongoDB é bem-sucedida
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Obtém o banco de dados especificado nas configurações
 	db := client.Database(cfg.DBName)
 
-	return db, nil
+	return db, client, nil
 }

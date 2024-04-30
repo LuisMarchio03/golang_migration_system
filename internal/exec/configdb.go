@@ -14,9 +14,10 @@ import (
 // Ele recebe o nome do driver do banco de dados e as configurações do banco de dados como parâmetros.
 // Se o driver for "MySql", chama a função DbMysql para configurar o banco de dados MySQL.
 // Retorna um possível erro, se houver.
-func ConfigDB(dbDriver string, cfg config.Cfg) (*sql.DB, *mongo.Database, error) {
+func ConfigDB(dbDriver string, cfg config.Cfg) (*sql.DB, *mongo.Database, *mongo.Client, error) {
 	var db *sql.DB
 	var dbNoSql *mongo.Database
+	var client *mongo.Client
 	var err error
 
 	dbDriver = strings.ToLower(dbDriver)
@@ -29,10 +30,10 @@ func ConfigDB(dbDriver string, cfg config.Cfg) (*sql.DB, *mongo.Database, error)
 	case "postgresql":
 		db, err = drivers.DbPostgreSQL(cfg)
 	case "mongodb":
-		dbNoSql, err = drivers.DbMongoDB(cfg)
+		dbNoSql, client, err = drivers.DbMongoDB(cfg)
 	default:
-		return nil, nil, fmt.Errorf("Driver de banco de dados não suportado: %s", dbDriver)
+		return nil, nil, nil, fmt.Errorf("Driver de banco de dados não suportado: %s", dbDriver)
 	}
 
-	return db, dbNoSql, err
+	return db, dbNoSql, client, err
 }

@@ -28,16 +28,16 @@ type Cfg = config.Cfg
 type Schema = config.Schema
 
 // ConfigDB configura e retorna uma conexão com o banco de dados
-func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, *mongo.Database, error) {
-	db, dbNoSql, err := exec.ConfigDB(dbDriver, cfg)
+func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, *mongo.Database, *mongo.Client, error) {
+	db, dbNoSql, client, err := exec.ConfigDB(dbDriver, cfg)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// Define o diretório de migrações
 	SetMigrationsDir(migrationsDir)
 
-	return db, dbNoSql, nil
+	return db, dbNoSql, client, nil
 }
 
 // GenerateMigration gera um arquivo de migração com as schemas fornecidas
