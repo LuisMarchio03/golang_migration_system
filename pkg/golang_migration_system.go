@@ -2,6 +2,7 @@ package golang_migration_system
 
 import (
 	"database/sql"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/LuisMarchio03/golang_migration_system/internal/config"
 	"github.com/LuisMarchio03/golang_migration_system/internal/exec"
@@ -27,16 +28,16 @@ type Cfg = config.Cfg
 type Schema = config.Schema
 
 // ConfigDB configura e retorna uma conexão com o banco de dados
-func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, error) {
-	db, err := exec.ConfigDB(dbDriver, cfg)
+func ExecConfigDB(dbDriver string, cfg config.Cfg, migrationsDir string) (*sql.DB, *mongo.Database, error) {
+	db, dbNoSql, err := exec.ConfigDB(dbDriver, cfg)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Define o diretório de migrações
 	SetMigrationsDir(migrationsDir)
 
-	return db, nil
+	return db, dbNoSql, nil
 }
 
 // GenerateMigration gera um arquivo de migração com as schemas fornecidas
@@ -51,6 +52,32 @@ func ExecGenerateMigration(schemas ...config.Schema) (string, error) {
 // RunMigrations executa todas as migrações encontradas no diretório especificado
 func ExecRunMigrations(db *sql.DB, migrationsDir string) error {
 	err := exec.RunMigrations(db, migrationsDir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GenerateMigration gera um arquivo de migração com as schemas fornecidas
+// params: migrationsDir string, documents ...map[string]interface{}
+func ExecGenerateMigrationMongoDB(documents config.Documents) (string, error) {
+	// Convertendo os documentos de config.Documents para []map[string]interface{}
+	var docs []map[string]interface{}
+	for _, doc := range documents.Documents {
+		docs = append(docs, doc)
+	}
+
+	// Chamada da função exec.GenerateMigrationMongoDB com os documentos convertidos
+	migrationFileName, err := exec.GenerateMigrationMongoDB(migrationsDir, docs...)
+	if err != nil {
+		return "", err
+	}
+	return migrationFileName, nil
+}
+
+// RunMigrations executa todas as migrações encontradas no diretório especificado
+func ExecRunMigrationsMongoDB(db *mongo.Database, migrationsDir string) error {
+	err := exec.RunMigrationsMongoDB(db, migrationsDir)
 	if err != nil {
 		return err
 	}

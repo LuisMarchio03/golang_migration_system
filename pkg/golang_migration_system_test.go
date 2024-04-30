@@ -23,7 +23,7 @@ func TestExecConfigDB(t *testing.T) {
 	migrationsDir := "."
 
 	// Executa a função a ser testada
-	db, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
+	db, _, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
 
 	// Verifica se não houve erro na configuração do banco de dados
 	assert.NoError(t, err, "Erro ao configurar o banco de dados")

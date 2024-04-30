@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"testing"
@@ -23,7 +24,7 @@ func TestExecConfigDB(t *testing.T) {
 	migrationsDir := "."
 
 	// Executa a função a ser testada
-	db, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
+	db, _, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
 
 	// Verifica se não houve erro na configuração do banco de dados
 	assert.NoError(t, err, "Erro ao configurar o banco de dados")
@@ -33,6 +34,32 @@ func TestExecConfigDB(t *testing.T) {
 
 	// Fecha a conexão com o banco de dados no final do teste
 	defer db.Close()
+}
+
+func TestExecConfigMongoDB(t *testing.T) {
+	// Configuração dos parâmetros do teste
+	dbDriver := "mongodb"
+	cfg := config.Cfg{
+		Addr:   "localhost:27017",
+		DBName: "mydatabase",
+	}
+	migrationsDir := "."
+
+	// Executa a função a ser testada
+	ctx := context.Background() // Contexto de fundo
+	_, dbNoSql, err := golang_migration_system.ExecConfigDB(dbDriver, cfg, migrationsDir)
+
+	// Verifica se não houve erro na configuração do banco de dados
+	assert.NoError(t, err, "Erro ao configurar o banco de dados")
+
+	// Verifica se a conexão com o banco de dados foi criada corretamente
+	assert.NotNil(t, dbNoSql, "Conexão com o banco de dados NoSQL não está definida")
+
+	// Fecha a conexão com o banco de dados no final do teste
+	defer func() {
+		err := dbNoSql.Client().Disconnect(ctx)
+		assert.NoError(t, err, "Erro ao fechar a conexão com o banco de dados NoSQL")
+	}()
 }
 
 func TestExecGenerateMigration(t *testing.T) {

@@ -57,3 +57,28 @@ func GenerateMigration(migrationsDir string, schemas ...config.Schema) (string, 
 
 	return migrationFileName, nil
 }
+
+// GenerateMigrationMongoDB cria uma nova "migração" para o MongoDB com base nos documentos fornecidos.
+// Ele cria um arquivo com um nome que inclui um timestamp para garantir unicidade.
+// Retorna o nome do arquivo de migração criado e um possível erro, se houver.
+func GenerateMigrationMongoDB(migrationsDir string, documents ...map[string]interface{}) (string, error) {
+	timestamp := time.Now().Format("20060102150405")
+	migrationFileName := fmt.Sprintf("migration_%s.js", timestamp) // Usando extensão .js para scripts do MongoDB
+	file, err := os.Create(filepath.Join(migrationsDir, migrationFileName))
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Escrever operações no arquivo de migração (por exemplo, inserções de documentos)
+	for _, doc := range documents {
+		// Construir operação de inserção para o MongoDB
+		insertOperation := fmt.Sprintf("db.collection('%s').insertOne(%#v);\n", doc["collection"], doc["document"])
+		_, err := file.WriteString(insertOperation)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return migrationFileName, nil
+}
